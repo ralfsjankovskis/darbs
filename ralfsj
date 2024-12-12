@@ -1,0 +1,98 @@
+import csv
+from datetime import datetime
+
+
+def calculate_hours(start_time, end_time):
+
+    if start_time == "nav" or end_time == "nav" or not start_time or not end_time:
+        return 0  
+    if len(start_time) == 5:  
+        start_time += ":00"
+    if len(end_time) == 5:
+        end_time += ":00"
+
+   
+    start = datetime.strptime(start_time, "%H:%M:%S")
+    end = datetime.strptime(end_time, "%H:%M:%S")
+
+    
+    if end < start:
+        raise ValueError("beigu laikam jabut agrakam par sakuma")
+
+    
+    time_diff = end - start
+    return time_diff.total_seconds() / 3600  
+def process_work_hours(file_path):
+    work_data = {}
+
+    with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            employee = row['darbinieks']
+            start_time = row['sakums']
+            end_time = row['beigas']
+
+            try:
+                worked_hours = calculate_hours(start_time, end_time)
+
+                if employee not in work_data:
+                    work_data[employee] = {'total_hours': 0, 'daily_hours': {}}
+
+                day = row['diena']
+                work_data[employee]['daily_hours'][day] = worked_hours
+                work_data[employee]['total_hours'] += worked_hours
+            except ValueError as e:
+                print(f"kluda darbiniekam {employee} ({start_time} - {end_time}): {e}")
+                if employee not in work_data:
+                    work_data[employee] = {'total_hours': 0, 'daily_hours': {}}
+                day = row['diena']
+                work_data[employee]['daily_hours'][day] = 0
+
+    return work_data
+
+def save_results(work_data, output_file):
+    with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+
+        writer.writerow(['darbinieks', 'diena', 'stundas'])
+        for employee, data in work_data.items():
+            for day, hours in data['daily_hours'].items():
+                writer.writerow([employee, day, round(hours, 2)])
+
+        writer.writerow([])
+        writer.writerow(['darbinieks', 'stundas nedela'])
+        for employee, data in work_data.items():
+            writer.writerow([employee, round(data['total_hours'], 2)])
+
+def find_max_worked_employee(work_data):
+    max_hours = 0
+    max_employee = ""
+
+    for employee, data in work_data.items():
+        if data['total_hours'] > max_hours:
+            max_hours = data['total_hours']
+            max_employee = employee
+
+    return max_employee, max_hours
+
+def main():
+    input_file = 'darba_laiki.csv'
+    output_file = 'rezultati.csv'
+
+    work_data = process_work_hours(input_file)
+
+    for employee, data in work_data.items():
+        print(f"\ndarbinieks: {employee}")
+        print(f" stundas nedela: {round(data['total_hours'], 2)}")
+        for day, hours in data['daily_hours'].items():
+            print(f" {day}: {round(hours, 2)} stundas")
+
+    max_employee, max_hours = find_max_worked_employee(work_data)
+    print(f"\ndarbinieks ar visvairak stundam: {max_employee} ({round(max_hours, 2)} stundas)")
+
+    save_results(work_data, output_file)
+    print(f"\saglabats faila: {output_file}")
+
+if __name__ == "__main__":
+    main()
