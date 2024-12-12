@@ -1,0 +1,27 @@
+Darbinieks,Diena,Stundas
+Anna,Pirmdiena,8.5
+Anna,Otrdiena,7.75
+Anna,Trešdiena,8.5
+Anna,Ceturdiena,8.25
+Anna,Piektdiena,6.25
+Anna,Sestdiena,4.0
+Anna,Svētdiena,0
+Jānis,Pirmdiena,7.5
+Jānis,Otrdiena,8.5
+Jānis,Trešdiena,8.5
+Jānis,Ceturdiena,8.0
+Jānis,Piektdiena,6.75
+Jānis,Sestdiena,4.5
+Jānis,Svētdiena,0
+Līga,Pirmdiena,8.0
+Līga,Otrdiena,8.25
+Līga,Trešdiena,8.0
+Līga,Ceturdiena,7.75
+Līga,Piektdiena,7.75
+Līga,Sestdiena,3.5
+Līga,Svētdiena,0
+
+Darbinieks,Kopā stundas nedēļā
+Anna,43.25
+Jānis,43.75
+Līga,43.25
